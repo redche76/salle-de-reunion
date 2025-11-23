@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Réservation de la salle de réunion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="Page de réservation en ligne de la salle de réunion."
+  />
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --text: #111827;
+      --muted: #6b7280;
+      --card-bg: #ffffff;
+      --border: #e5e7eb;
+      --radius-lg: 16px;
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 24px 20px;
+      background: #0f172a;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      font-size: 14px;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    main {
+      flex: 1;
+      padding: 32px 16px 40px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      header {
+        padding: 16px 12px;
+      }
+      main {
+        padding: 24px 12px 32px;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 24px 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 20px;
+    }
+
+    p {
+      margin: 0 0 10px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: #0f172a;
+      background: rgba(248, 250, 252, 0.9);
+      margin-bottom: 12px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
+    }
+
+    .room-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin: 18px 0 6px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .room-details li {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .room-details strong {
+      display: block;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .notice {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      border-left: 3px solid var(--primary);
+      padding-left: 10px;
+    }
+
+    .btn-primary,
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.08s ease, box-shadow 0.08s ease,
+        background-color 0.12s ease, border-color 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 24px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border-color: rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-outline:hover {
+      background: rgba(37, 99, 235, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      font-family: inherit;
+      background: #f9fafb;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease,
+        background-color 0.12s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .helper {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .required {
+      color: #ef4444;
+      margin-left: 2px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="header-inner">
+        <div class="logo">PROTECTERRA / TERRACONSULTING</div>
+        <div class="header-title">Réservation de la salle de réunion</div>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <!-- Colonne gauche : présentation -->
+        <section class="card" aria-labelledby="titre-salle">
+          <div class="badge">
+            <span class="badge-dot" aria-hidden="true"></span>
+            Réservation en ligne
+          </div>
+          <h1 id="titre-salle">Salle de réunion “Nom de ta salle”</h1>
+          <p class="muted">
+            Cette page vous permet de demander la réservation de notre salle de
+            réunion en quelques clics.
+          </p>
+
+          <ul class="room-details">
+            <li>
+              <strong>Capacité</strong>
+              Jusqu’à 8–10 personnes
+            </li>
+            <li>
+              <strong>Équipements</strong>
+              Écran / TV, Wi-Fi, paperboard, prises électriques
+            </li>
+            <li>
+              <strong>Adresse</strong>
+              La Manufacture des Capucins, &lt;Ville&gt;
+            </li>
+            <li>
+              <strong>Horaires</strong>
+              Lundi – Vendredi, 9h00 à 18h00
+            </li>
+          </ul>
+
+          <p>
+            Après avoir envoyé votre demande, vous recevrez une confirmation
+            manuelle par e-mail en fonction des disponibilités de la salle.
+          </p>
+
+          <div class="notice">
+            💡 Pour éviter les conflits de réservation, merci de
+            <strong>vérifier la disponibilité</strong> de la salle avant
+            d’envoyer votre demande.
+          </div>
+
+          <div class="btn-row" aria-label="Liens utiles de réservation">
+            <!-- 🔗 Remplace le # par le lien public de ton Google Calendar (vue agenda de la salle) -->
+            <a
+              class="btn-outline"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Voir les disponibilités (Google Agenda)
+            </a>
+            <!-- 🔗 Option : si tu utilises un système de rendez-vous Google (Appointment Scheduling) mets le lien ici -->
+            <a
+              class="btn-primary"
+              href="#formulaire-reservation"
+            >
+              Faire une demande de réservation
+            </a>
+          </div>
+        </section>
+
+        <!-- Colonne droite : formulaire -->
+        <section class="card" id="formulaire-reservation" aria-labelledby="titre-formulaire">
+          <h2 id="titre-formulaire">Demande de réservation</h2>
+          <p class="muted">
+            Merci de compléter ce formulaire. Nous vous répondrons dans les
+            meilleurs délais avec une confirmation ou une proposition d’horaire
+            alternatif.
+          </p>
+
+          <!--
+            📝 IMPORTANT :
+            - Si tu utilises un service comme Formspree / Getform / Basin :
+              -> remplace l'attribut action du <form> par l'URL fournie.
+            - Si tu préfères Google Forms :
+              -> Tu peux aussi supprimer ce <form> et intégrer ton Google Form via <iframe>.
+          -->
+          <form
+            method="POST"
+            action="#"
+            onsubmit="alert('Ce site est statique. Configure ici un service de formulaire (Formspree, Google Form, etc.) pour recevoir les demandes.'); return false;"
+          >
+            <div>
+              <label for="nom">
+                Nom / Prénom<span class="required" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="text"
+                id="nom"
+                name="nom"
+                required
+                autocomplete="name"
+              />
+            </div>
+
+            <div>
+              <label for="email">
+                Adresse e-mail<span class="required" aria-hidden="true">*</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                autocomplete="email"
+              />
+              <div class="helper">
+                Nous utiliserons cet e-mail pour vous envoyer la confirmation.
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label for="entreprise">Entreprise / Organisation</label>
+                <input
+                  type="text"
+                  id="entreprise"
+                  name="entreprise"
+                  autocomplete="organization"
+                />
+              </div>
+              <div>
+                <label for="participants">
+                  Nombre de participants<span class="required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="number"
+                  id="participants"
+                  name="participants"
+                  min="1"
+                  max="20"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label for="date">
+                  Date souhaitée<span class="required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  required
+                />
+              </div>
+              <div>
+                <label for="creneau">
+                  Créneau horaire<span class="required" aria-hidden="true">*</span>
+                </label>
+                <select id="creneau" name="creneau" required>
+                  <option value="">Sélectionnez un créneau</option>
+                  <option value="09h00-11h00">09h00 – 11h00</option>
+                  <option value="11h00-13h00">11h00 – 13h00</option>
+                  <option value="14h00-16h00">14h00 – 16h00</option>
+                  <option value="16h00-18h00">16h00 – 18h00</option>
+                  <option value="autre">Autre (à préciser)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="besoins">Besoins spécifiques</label>
+              <textarea
+                id="besoins"
+                name="besoins"
+                placeholder="Ex : visioconférence, disposition en U, prise près de chaque poste, collation, etc."
+              ></textarea>
+            </div>
+
+            <div>
+              <label for="message">Message complémentaire</label>
+              <textarea
+                id="message"
+                name="message"
+                placeholder="Ajoutez toute information utile pour votre réservation."
+              ></textarea>
+            </div>
+
+            <div class="helper">
+              En envoyant ce formulaire, vous acceptez que vos informations
+              soient utilisées uniquement pour la gestion de la réservation de
+              la salle de réunion.
+            </div>
+
+            <button type="submit" class="btn-primary" style="margin-top: 10px;">
+              Envoyer la demande
+            </button>
+          </form>
+
+          <!--
+          🔁 Variante avec Google Forms (à utiliser à la place du formulaire ci-dessus) :
+
+          <iframe
+            src="URL_DE_TON_GOOGLE_FORM"
+            width="100%"
+            height="600"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+          >
+            Chargement…
+          </iframe>
+          -->
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      © <span id="year"></span> Réservation salle de réunion — Géré par votre entreprise.
+    </footer>
+  </div>
+
+  <script>
+    // Met à jour automatiquement l'année en bas de page
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
